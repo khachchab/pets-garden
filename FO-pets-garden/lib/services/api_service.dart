@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://localhost/BO%20pets%20garden/";
+  static const String baseUrl = "http://localhost/phpmyadmin/index.php?route=/database/structure&server=1&db=pets_garden";
 
   Future<List<dynamic>> getAds() async {
     final response = await http.get(Uri.parse(baseUrl + "get_ads.php"));
