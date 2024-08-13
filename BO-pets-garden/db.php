@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "pets_adoption_app";
+    private $db_name = "pets_garden";
     private $username = "root";
     private $password = "";
     public $conn;
