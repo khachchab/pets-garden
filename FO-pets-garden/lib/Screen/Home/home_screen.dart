@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pets_adoption_app/Model/pets_model.dart';
 import 'package:pets_adoption_app/Screen/Detail/detail.dart';
 import 'package:pets_adoption_app/Screen/Profile/profile.dart';
-import 'package:pets_adoption_app/Screen/annonce/annonce.dart'; // Import the PostAdScreen
+import 'package:pets_adoption_app/Screen/annonce/annonce.dart';
+import 'package:pets_adoption_app/services/api_service.dart';
 
 class PetsHomeScreen extends StatefulWidget {
   const PetsHomeScreen({super.key});
@@ -14,11 +14,34 @@ class PetsHomeScreen extends StatefulWidget {
 
 class _PetsHomeScreenState extends State<PetsHomeScreen> {
   int selectedIndex = 0;
-  List<String> categoryList = ["Cats", "Dogs", "Messages", "Profile"]; // Updated here
+  List<String> categoryList = ["Cats", "Dogs", "Messages", "Profile"];
+  List<PetsModel> pets = [];
+  bool isLoading = true;
+  final ApiService apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPets();
+  }
+
+  Future<void> fetchPets() async {
+    try {
+      List<dynamic> ads = await apiService.getAds();
+      setState(() {
+        pets = ads.map((ad) => PetsModel.fromJson(ad)).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Erreur lors de la récupération des annonces: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<List<PetsModel>> categories = [cats, dogs, birds, snakes, other];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -36,7 +59,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.black), // "+" button
+            icon: const Icon(Icons.add, color: Colors.black),
             onPressed: () {
               Navigator.push(
                 context,
@@ -50,15 +73,15 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            const Padding(
-              padding: EdgeInsets.only(left: 22),
-              child: Text.rich(
-                TextSpan(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
+              const Padding(
+                padding: EdgeInsets.only(left: 22),
+                child: Text.rich(
+                  TextSpan(
                     text: "Trouvez un gardien pour votre compagnon\n",
                     style: TextStyle(
                       height: 1.1,
@@ -72,160 +95,137 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                           fontSize: 35,
                           fontWeight: FontWeight.normal,
                         ),
-                      )
-                    ]),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            categorySelection(),
-            selectedIndex < categoryList.length && selectedIndex < 2 // Show pets only for Cats and Dogs
-                ? (Padding(
-                    padding: const EdgeInsets.only(left: 22),
-                    child: SizedBox(
-                      height: 570,
-                      child: ListView.builder(
-                          itemCount: categories[selectedIndex].length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetailScreen(
-                                      pets: categories[selectedIndex][index],
+              const SizedBox(height: 20),
+              categorySelection(),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : selectedIndex < categoryList.length && selectedIndex < 2
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 22),
+                          child: SizedBox(
+                            height: 570,
+                            child: ListView.builder(
+                              itemCount: pets.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailScreen(
+                                          pets: pets[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 30, right: 15),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                height: 50,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 30),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: pets[index].color,
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  height: 230,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 230,
+                                                child: Center(
+                                                  child: Hero(
+                                                    tag: pets[index].image,
+                                                    child: Image.asset(
+                                                      pets[index].image,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 25),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: pets[index].color.withOpacity(0.2),
+                                                borderRadius: const BorderRadius.only(
+                                                  topRight: Radius.circular(20),
+                                                  bottomRight: Radius.circular(20),
+                                                ),
+                                              ),
+                                              height: 150,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 15),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      pets[index].name,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: 25,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    Text(
+                                                      pets[index].breed,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          pets[index].sex,
+                                                          style: const TextStyle(fontSize: 15),
+                                                        ),
+                                                        Text(
+                                                          ", ${pets[index].age} year old",
+                                                          style: const TextStyle(fontSize: 15),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
                               },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 30, right: 15),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            height: 50,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 30),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: categories[selectedIndex]
-                                                        [index]
-                                                    .color,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              height: 230,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 230,
-                                            child: Center(
-                                              child: Hero(
-                                                tag: categories[selectedIndex]
-                                                        [index]
-                                                    .image,
-                                                child: Image.asset(
-                                                  categories[selectedIndex]
-                                                          [index]
-                                                      .image,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 25),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: categories[selectedIndex]
-                                                    [index]
-                                                .color
-                                                .withOpacity(0.2),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topRight: Radius.circular(20),
-                                              bottomRight: Radius.circular(20),
-                                            ),
-                                          ),
-                                          height: 150,
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 15),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  categories[selectedIndex]
-                                                          [index]
-                                                      .name,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 25,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  categories[selectedIndex]
-                                                          [index]
-                                                      .breed,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      categories[selectedIndex]
-                                                              [index]
-                                                          .sex,
-                                                      style: const TextStyle(
-                                                          fontSize: 15),
-                                                    ),
-                                                    Text(
-                                                      ", ${categories[selectedIndex][index].age} year old",
-                                                      style: const TextStyle(
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                    ),
-                  ))
-                : const SizedBox(),
-          ],
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 
