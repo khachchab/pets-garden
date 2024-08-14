@@ -28,6 +28,9 @@ class DetailScreen extends StatelessWidget {
                       fontSize: 50,
                     ),
                   ),
+                  // Since there is no 'description' field in your PetsModel, this is omitted.
+                  // If you later add it, you can uncomment the following code:
+                  /*
                   Text(
                     pets.description,
                     style: const TextStyle(
@@ -35,6 +38,7 @@ class DetailScreen extends StatelessWidget {
                       color: Colors.black54,
                     ),
                   ),
+                  */
                 ],
               ),
             ),
@@ -71,9 +75,9 @@ class DetailScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ageSexOrigin(pets.age, "Age"),
+                          ageSexOrigin(pets.age.toString(), "Age"),
                           ageSexOrigin(pets.sex, "Sex"),
-                          ageSexOrigin(pets.origin, "Origin"),
+                          ageSexOrigin(pets.breed, "Breed"), // Display breed instead of origin
                         ],
                       ),
                     ),
@@ -95,7 +99,7 @@ class DetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Add the Contact Owner button at the bottom of the screen
+          // Ajouter le bouton Contacter le propriétaire en bas de l'écran
           Positioned(
             bottom: 30,
             left: 20,
@@ -127,7 +131,7 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Container ageSexOrigin(value, name) {
+  Container ageSexOrigin(String value, String name) {
     return Container(
       height: 100,
       width: 100,
