@@ -63,7 +63,7 @@ class DetailScreen extends StatelessWidget {
                       child: Hero(
                         tag: pets.image,
                         child: Image.asset(
-                          pets.image,
+                          'images/' + pets.image,
                           height: size.height * 0.5,
                           fit: BoxFit.cover,
                         ),

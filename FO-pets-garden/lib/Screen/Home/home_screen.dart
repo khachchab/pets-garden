@@ -40,6 +40,16 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
     }
   }
 
+  List<PetsModel> getFilteredPets() {
+    if (selectedIndex == 0) {
+      return pets.where((pet) => pet.category.toLowerCase() == "cat").toList();
+    } else if (selectedIndex == 1) {
+      return pets.where((pet) => pet.category.toLowerCase() == "dog").toList();
+    } else {
+      return pets;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,15 +120,16 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                           child: SizedBox(
                             height: 570,
                             child: ListView.builder(
-                              itemCount: pets.length,
+                              itemCount: getFilteredPets().length,
                               itemBuilder: (context, index) {
+                                final filteredPets = getFilteredPets();
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => DetailScreen(
-                                          pets: pets[index],
+                                          pets: filteredPets[index],
                                         ),
                                       ),
                                     );
@@ -141,7 +152,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                                 padding: const EdgeInsets.only(top: 30),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: pets[index].color,
+                                                    color: filteredPets[index].color,
                                                     borderRadius: BorderRadius.circular(20),
                                                   ),
                                                   height: 230,
@@ -151,9 +162,9 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                                 height: 230,
                                                 child: Center(
                                                   child: Hero(
-                                                    tag: pets[index].image,
+                                                    tag: filteredPets[index].image,
                                                     child: Image.asset(
-                                                      pets[index].image,
+                                                      'images/' + filteredPets[index].image,
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
@@ -167,7 +178,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                             padding: const EdgeInsets.only(top: 25),
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                color: pets[index].color.withOpacity(0.2),
+                                                color: filteredPets[index].color.withOpacity(0.2),
                                                 borderRadius: const BorderRadius.only(
                                                   topRight: Radius.circular(20),
                                                   bottomRight: Radius.circular(20),
@@ -181,7 +192,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      pets[index].name,
+                                                      filteredPets[index].name,
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w500,
                                                         fontSize: 25,
@@ -189,7 +200,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      pets[index].breed,
+                                                      filteredPets[index].breed,
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w500,
                                                         fontSize: 15,
@@ -198,11 +209,11 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                          pets[index].sex,
+                                                          filteredPets[index].sex,
                                                           style: const TextStyle(fontSize: 15),
                                                         ),
                                                         Text(
-                                                          ", ${pets[index].age} year old",
+                                                          ", ${filteredPets[index].age} year old",
                                                           style: const TextStyle(fontSize: 15),
                                                         ),
                                                       ],
@@ -242,7 +253,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
               setState(() {
                 selectedIndex = index;
               });
-              if (index == 3) {  // If "Profile" is selected (index 3)
+              if (index == 3) {  // Si "Profile" est sélectionné (index 3)
                 Navigator.push(
                   context,
                   MaterialPageRoute(
