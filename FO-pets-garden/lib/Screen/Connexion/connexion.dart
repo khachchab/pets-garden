@@ -1,9 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:pets_adoption_app/Screen/Home/home_screen.dart';
 import 'package:pets_adoption_app/Screen/Inscription/inscription.dart';
+import 'package:pets_adoption_app/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LogInScreen extends StatelessWidget {
+class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
+
+  @override
+  _LogInScreenState createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const PetsHomeScreen()),
+      );
+    }
+  }
+
+  Future<void> _login() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    ApiService apiService = ApiService();
+
+    try {
+      Map<String, dynamic> response = await apiService.login(email, password);
+
+      if (response['status'] == 'success') {
+        // Stocker l'état de connexion et l'ID de l'utilisateur
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setInt('account_id', response['account_id']);
+
+        // Rediriger vers l'écran d'accueil
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const PetsHomeScreen()),
+        );
+      } else {
+        _showError(response['message']);
+      }
+    } catch (e) {
+      _showError('Failed to login. Please try again.');
+    }
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +109,7 @@ class LogInScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       labelText: "Email",
                       filled: true,
@@ -45,6 +121,7 @@ class LogInScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: "Password",
@@ -58,14 +135,7 @@ class LogInScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PetsHomeScreen(),
-                          ),
-                        );
-                      },
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 80,
