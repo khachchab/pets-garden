@@ -13,6 +13,11 @@ class PostAdScreen extends StatefulWidget {
 class _PostAdScreenState extends State<PostAdScreen> {
   final _formKey = GlobalKey<FormState>();
   String? petType;
+  String? breed;
+  String? sex;
+  String? age;
+  String? origin;
+  String? description;
   DateTime? startDate;
   DateTime? endDate;
   String? city;
@@ -36,7 +41,7 @@ class _PostAdScreenState extends State<PostAdScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          
+
           // Form
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -71,7 +76,112 @@ class _PostAdScreenState extends State<PostAdScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  
+
+                  // Breed Field
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Race",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Veuillez entrer la race de l'animal";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      breed = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Sex Field
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Sexe",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Veuillez entrer le sexe de l'animal";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      sex = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Age Field
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Âge",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Veuillez entrer l'âge de l'animal";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      age = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Origin Field
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Origine",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Veuillez entrer l'origine de l'animal";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      origin = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Description Field
+                  TextFormField(
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: "Description",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    onSaved: (value) {
+                      description = value;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
                   // Date Picker for Start Date
                   TextFormField(
                     readOnly: true,
@@ -109,7 +219,7 @@ class _PostAdScreenState extends State<PostAdScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Date Picker for End Date
                   TextFormField(
                     readOnly: true,
@@ -169,7 +279,7 @@ class _PostAdScreenState extends State<PostAdScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Comments Field
                   TextFormField(
                     maxLines: 4,
@@ -186,7 +296,7 @@ class _PostAdScreenState extends State<PostAdScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Upload Image Button
                   ElevatedButton.icon(
                     onPressed: () async {
@@ -208,7 +318,7 @@ class _PostAdScreenState extends State<PostAdScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  
+
                   // Display selected image
                   petImage != null
                       ? Image.file(
