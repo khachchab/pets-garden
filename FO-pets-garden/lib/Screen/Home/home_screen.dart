@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pets_adoption_app/Model/pets_model.dart';
+import 'package:pets_adoption_app/Screen/Conversations/Conversations.dart';
 import 'package:pets_adoption_app/Screen/Detail/detail.dart';
 import 'package:pets_adoption_app/Screen/Profile/profile.dart';
 import 'package:pets_adoption_app/Screen/annonce/annonce.dart';
+import 'package:pets_adoption_app/Screen/Conversations/conversations_screen.dart';
 import 'package:pets_adoption_app/services/api_service.dart';
 
 class PetsHomeScreen extends StatefulWidget {
@@ -258,6 +260,13 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ProfileScreen(),
+                  ),
+                );
+              } else if (index == 2) {  // Si "Messages" est sélectionné (index 2)
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ConversationsScreen(),
                   ),
                 );
               }
