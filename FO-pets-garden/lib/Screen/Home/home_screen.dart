@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pets_adoption_app/Model/pets_model.dart';
-import 'package:pets_adoption_app/Screen/Conversations/Conversations.dart';
+import 'package:pets_adoption_app/Screen/Conversations/conversations_screen.dart';
 import 'package:pets_adoption_app/Screen/Detail/detail.dart';
 import 'package:pets_adoption_app/Screen/Profile/profile.dart';
 import 'package:pets_adoption_app/Screen/annonce/annonce.dart';
-import 'package:pets_adoption_app/Screen/Conversations/conversations_screen.dart';
 import 'package:pets_adoption_app/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PetsHomeScreen extends StatefulWidget {
   const PetsHomeScreen({super.key});
@@ -52,6 +52,12 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
     }
   }
 
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +86,10 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
                 ),
               );
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: _logout, // Ajoute un bouton de déconnexion
           ),
         ],
       ),
@@ -116,7 +126,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
               categorySelection(),
               isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : selectedIndex < categoryList.length && selectedIndex < 2
+                  : selectedIndex < 2
                       ? Padding(
                           padding: const EdgeInsets.only(left: 22),
                           child: SizedBox(

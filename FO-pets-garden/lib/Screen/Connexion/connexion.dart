@@ -41,11 +41,21 @@ class _LogInScreenState extends State<LogInScreen> {
     try {
       Map<String, dynamic> response = await apiService.login(email, password);
 
+      // Afficher la réponse complète pour le débogage
+      print('Response: $response');
+
       if (response['status'] == 'success') {
+        // Log supplémentaire pour vérifier que cette condition est bien atteinte
+        print('Login success, redirecting to home...');
+
         // Stocker l'état de connexion et l'ID de l'utilisateur
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        
+        // Convertir l'account_id en int avant de le stocker
+        int accountId = int.parse(response['account_id']);
+        
         await prefs.setBool('isLoggedIn', true);
-        await prefs.setInt('account_id', response['account_id']);
+        await prefs.setInt('account_id', accountId);
 
         // Rediriger vers l'écran d'accueil
         Navigator.pushReplacement(
@@ -53,9 +63,12 @@ class _LogInScreenState extends State<LogInScreen> {
           MaterialPageRoute(builder: (context) => const PetsHomeScreen()),
         );
       } else {
+        // Afficher le message d'erreur reçu du serveur
+        print('Login failed, showing error message...');
         _showError(response['message']);
       }
     } catch (e) {
+      print('Exception caught: $e');
       _showError('Failed to login. Please try again.');
     }
   }

@@ -27,10 +27,18 @@ class ApiService {
       headers: {"Content-Type": "application/json"},
       body: json.encode({"email": email, "password": password}),
     );
+
+    // Log de la réponse du serveur pour le débogage
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to login');
+      // Log de l'erreur avec plus de détails
+      print('Login failed with status: ${response.statusCode}');
+      print('Server response: ${response.body}');
+      throw Exception('Failed to login: ${response.statusCode}');
     }
   }
 
