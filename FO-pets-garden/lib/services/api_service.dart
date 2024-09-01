@@ -28,17 +28,15 @@ class ApiService {
       body: json.encode({"email": email, "password": password}),
     );
 
-    // Log de la réponse du serveur pour le débogage
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final responseBody = json.decode(response.body);
+      if (responseBody['status'] == 'success') {
+        return responseBody;
+      } else {
+        throw Exception(responseBody['message']);
+      }
     } else {
-      // Log de l'erreur avec plus de détails
-      print('Login failed with status: ${response.statusCode}');
-      print('Server response: ${response.body}');
-      throw Exception('Failed to login: ${response.statusCode}');
+      throw Exception('Failed to login');
     }
   }
 
@@ -77,6 +75,16 @@ class ApiService {
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to delete account');
+    }
+  }
+
+  // Déconnexion de l'utilisateur
+  Future<bool> logout() async {
+    final response = await http.get(Uri.parse(baseUrl + "logout.php"));
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 

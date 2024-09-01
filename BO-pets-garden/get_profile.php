@@ -15,16 +15,29 @@ if (!isset($data->account_id)) {
     exit();
 }
 
-$query = "SELECT * FROM profiles WHERE account_id = :account_id";
+$query = "SELECT 
+            a.email,
+            p.name,
+            p.profile_photo,
+            p.user_type,
+            p.telephone,
+            p.description
+          FROM profiles p 
+          JOIN accounts a ON p.account_id = a.id
+          WHERE p.account_id = :account_id";
+
 $stmt = $db->prepare($query);
-$stmt->bindParam(':account_id', $data->account_id);
-$stmt->execute();
+$stmt->bindParam(':account_id', $data->account_id, PDO::PARAM_INT);
 
-$profile = $stmt->fetch(PDO::FETCH_ASSOC);
+if($stmt->execute()) {
+    $profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($profile) {
-    echo json_encode($profile);
+    if ($profile) {
+        echo json_encode($profile);
+    } else {
+        echo json_encode(array("message" => "Profil non trouvé."));
+    }
 } else {
-    echo json_encode(array("message" => "Profil non trouvé."));
+    echo json_encode(array("message" => "Erreur lors de la récupération du profil."));
 }
 ?>

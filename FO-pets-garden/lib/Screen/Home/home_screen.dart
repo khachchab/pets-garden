@@ -4,6 +4,7 @@ import 'package:pets_adoption_app/Screen/Conversations/conversations_screen.dart
 import 'package:pets_adoption_app/Screen/Detail/detail.dart';
 import 'package:pets_adoption_app/Screen/Profile/profile.dart';
 import 'package:pets_adoption_app/Screen/annonce/annonce.dart';
+import 'package:pets_adoption_app/Screen/Connexion/connexion.dart'; // Import de l'écran de connexion
 import 'package:pets_adoption_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +25,20 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _checkSession();
     fetchPets();
+  }
+
+  Future<void> _checkSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (!isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LogInScreen()), // Redirige vers l'écran de connexion
+      );
+    }
   }
 
   Future<void> fetchPets() async {
@@ -55,7 +69,10 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LogInScreen()), // Redirige vers l'écran de connexion
+    );
   }
 
   @override
@@ -89,7 +106,7 @@ class _PetsHomeScreenState extends State<PetsHomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.black),
-            onPressed: _logout, // Ajoute un bouton de déconnexion
+            onPressed: _logout, // Bouton de déconnexion redirigeant vers login.dart
           ),
         ],
       ),
