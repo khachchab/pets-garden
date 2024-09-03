@@ -28,17 +28,6 @@ class DetailScreen extends StatelessWidget {
                       fontSize: 50,
                     ),
                   ),
-                  // Since there is no 'description' field in your PetsModel, this is omitted.
-                  // If you later add it, you can uncomment the following code:
-                  /*
-                  Text(
-                    pets.description,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  */
                 ],
               ),
             ),
@@ -77,7 +66,7 @@ class DetailScreen extends StatelessWidget {
                         children: [
                           ageSexOrigin(pets.age.toString(), "Age"),
                           ageSexOrigin(pets.sex, "Sex"),
-                          ageSexOrigin(pets.breed, "Breed"), // Display breed instead of origin
+                          ageSexOrigin(pets.breed, "Breed"),
                         ],
                       ),
                     ),
@@ -99,7 +88,6 @@ class DetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Ajouter le bouton Contacter le propriétaire en bas de l'écran
           Positioned(
             bottom: 30,
             left: 20,
@@ -109,7 +97,11 @@ class DetailScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ChatScreen(), // Navigate to ChatScreen
+                    builder: (context) => ChatScreen(
+                      ownerEmail: pets.ownerEmail,  // Ajoutez ces propriétés à votre modèle PetsModel
+                      ownerPhone: pets.ownerPhone,  // Ajoutez ces propriétés à votre modèle PetsModel
+                      petImage: 'images/' + pets.image,
+                    ),
                   ),
                 );
               },

@@ -10,6 +10,8 @@ class PetsModel {
   final Color color;
   final String image;
   final String category;
+  final String ownerEmail;  // Ajout de ownerEmail
+  final String ownerPhone;  // Ajout de ownerPhone
 
   PetsModel({
     required this.name,
@@ -21,6 +23,8 @@ class PetsModel {
     required this.color,
     required this.image,
     required this.category,
+    required this.ownerEmail,  // Ajout de ownerEmail
+    required this.ownerPhone,  // Ajout de ownerPhone
   });
 
   factory PetsModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +40,8 @@ class PetsModel {
           : Colors.grey,  // Couleur par défaut si null
       image: json['animal_photo'] ?? 'default.png', // Image par défaut si null
       category: json['animal_type'],
+      ownerEmail: json['ownerEmail'] ?? 'unknown@example.com', // Valeur par défaut si null
+      ownerPhone: json['ownerPhone'] ?? '0000000000', // Valeur par défaut si null
     );
   }
 }

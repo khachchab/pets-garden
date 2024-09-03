@@ -67,10 +67,10 @@ class ConversationCard extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Row(
-              children: [
-                const Icon(Icons.message, color: Colors.grey, size: 18),
-                const SizedBox(width: 5),
-                const Text(
+              children: const [
+                Icon(Icons.message, color: Colors.grey, size: 18),
+                SizedBox(width: 5),
+                Text(
                   '24 Replies',
                   style: TextStyle(
                     color: Colors.black54,
@@ -106,7 +106,11 @@ class ConversationCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ChatScreen(), // Créez et connectez cette page ultérieurement
+              builder: (context) => ChatScreen(
+                ownerEmail: 'email@example.com', // Remplacez par les informations réelles
+                ownerPhone: '1234567890',        // Remplacez par les informations réelles
+                petImage: 'images/pet.png',      // Remplacez par le chemin d'image réel
+              ),
             ),
           );
         },
