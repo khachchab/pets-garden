@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/profilescreen.dart';
-import 'screens/adscren.dart';
+import 'screens/adsscreen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pets_adoption_app/services/api_service.dart';
+import 'package:pets_adoption_app/Screen/Connexion/connexion.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,19 +12,37 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<Map<String, dynamic>> _profileFuture;
-  final ApiService apiService = ApiService(); // Instanciation du service API
+  final ApiService apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    // Remplacez 1 par l'identifiant réel de l'utilisateur connecté
-    _profileFuture = apiService.getProfile(1);
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    // Get the saved account_id from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? accountId = prefs.getInt('account_id');
+
+    if (accountId != null) {
+      // Fetch profile data using the accountId
+      setState(() {
+        _profileFuture = apiService.getProfile(accountId);
+      });
+    } else {
+      // If accountId is not found, redirect to the login screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LogInScreen()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff7f7f7), // Couleur de fond claire
+      backgroundColor: const Color(0xfff7f7f7),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -56,7 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 20),
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: (profileData['profile_photo'] != null && profileData['profile_photo'].isNotEmpty)
+                  backgroundImage: (profileData['profile_photo'] != null &&
+                          profileData['profile_photo'].isNotEmpty)
                       ? NetworkImage(profileData['profile_photo'])
                       : const AssetImage("images/profile.png") as ImageProvider,
                 ),

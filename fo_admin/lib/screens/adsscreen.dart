@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:web_dashboard_app_tut/service/api_service.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class AdsScreen extends StatefulWidget {
+  const AdsScreen({Key? key}) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _AdsScreenState createState() => _AdsScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _AdsScreenState extends State<AdsScreen> {
   late ApiService apiService;
-  List<dynamic> profiles = [];
+  List<dynamic> ads = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     apiService = ApiService(baseUrl: 'http://localhost/BO-pets-garden/');
-    fetchProfiles();
+    fetchAds();
   }
 
-  // Méthode pour récupérer les profils depuis l'API
-  void fetchProfiles() async {
+  // Méthode pour récupérer les annonces depuis l'API
+  void fetchAds() async {
     try {
-      List<dynamic> profilesData = await apiService.getProfiles();
+      List<dynamic> adsData = await apiService.getAds();
       setState(() {
-        profiles = profilesData;
+        ads = adsData;
         isLoading = false;
       });
     } catch (e) {
-      print('Erreur lors de la récupération des profils: $e');
+      print('Erreur lors de la récupération des annonces: $e');
       setState(() {
         isLoading = false;
       });
@@ -40,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Gestion des Profils"),
+        title: Text("Gestion des Annonces"),
         backgroundColor: Theme.of(context).primaryColor,  // Utilise la couleur principale
       ),
       body: Padding(
@@ -52,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gestion des Profils",
+                      "Gestion des Annonces",
                       style: TextStyle(
                         fontSize: 28.0,
                         fontWeight: FontWeight.bold,
@@ -66,22 +66,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       columns: const [
                         DataColumn(label: Text("ID")),
+                        DataColumn(label: Text("Profile ID")),
                         DataColumn(label: Text("Nom")),
-                        DataColumn(label: Text("Email")),
-                        DataColumn(label: Text("Type d'utilisateur")),
+                        DataColumn(label: Text("Animal Type")),
+                        DataColumn(label: Text("Race")),
+                        DataColumn(label: Text("Ville")),
+                        DataColumn(label: Text("Image")),
                         DataColumn(label: Text("Actions")),
                       ],
-                      rows: profiles.map((profile) {
+                      rows: ads.map((ad) {
                         return DataRow(cells: [
-                          DataCell(Text(profile['id'].toString())),
-                          DataCell(Text(profile['name'])),
-                          DataCell(Text(profile['account_email'])),
-                          DataCell(Text(profile['user_type'])),
+                          DataCell(Text(ad['id'].toString())),
+                          DataCell(Text(ad['profile_name'])),
+                          DataCell(Text(ad['name'])),
+                          DataCell(Text(ad['animal_type'])),
+                          DataCell(Text(ad['breed'] ?? '')),
+                          DataCell(Text(ad['city'] ?? '')),
+                          DataCell(
+                            ad['animal_photo'] != null && ad['animal_photo'] != ''
+                                ? Image.asset(
+                                    'images/${ad['animal_photo']}',  // Charge les images locales
+                                    height: 50,
+                                    width: 50,
+                                  )
+                                : Image.asset(
+                                    'images/placeholder.png',  // Image par défaut si aucune image
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                          ),
                           DataCell(Row(
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  // Logique de modification du profil
+                                  // Logique de modification de l'annonce
                                 },
                                 child: Text("Modifier"),
                                 style: ElevatedButton.styleFrom(
@@ -91,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () {
-                                  // Logique de suppression du profil
+                                  // Logique de suppression de l'annonce
                                 },
                                 child: Text("Supprimer"),
                                 style: ElevatedButton.styleFrom(
